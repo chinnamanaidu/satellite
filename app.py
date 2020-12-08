@@ -6,6 +6,7 @@ from splinter import Browser
 from bs4 import BeautifulSoup as bs
 import time
 import csv
+import datetime, time
 import requests
 from scipy import stats
 
@@ -28,14 +29,20 @@ def home():
     # @TODO: YOUR CODE HERE!
     country = engine.execute("select * from country ", con=engine)
     data_cat = engine.execute("select * from satellite_category", con=engine)
+    sat_ids = engine.execute("select satellite_id from country_satellite order by 1", con=engine)
+    sat_names = engine.execute("select satellite_name from country_satellite order by 1", con=engine)
     #return render_template("index.html", listings=listings)
     # Return template and data
-    testValTestOnly = {'firstname': 'Harry', 'lastname': 'Potter'}
-    resdata = {
-        "lat":"test1",
-        "lng":"test2"
+  
+    resdata = [{
+  
     }
-    return render_template("index.html", country=country, category=data_cat, testVal = testValTestOnly,resdata=resdata)
+    ]
+
+    responsedata = { 'respdata': resdata
+    }
+    return render_template("index.html", country=country, category=data_cat, responsedata=responsedata, 
+            init_page="initpage", sat_ids=sat_ids, sat_names=sat_names)
 
 
 #
@@ -43,15 +50,16 @@ def home():
 #def startEndDate(startdt, enddt):
 
 # Route to render index.html template using data from Mongo
-@app.route("/getSatellite/<cntry>")
-def satellite_country(cntry):
+@app.route("/getSatellite/<cntry>/<numSat>")
+def satellite_country(cntry,numSat):
 
     # Find one record of data from the mongo database
     # @TODO: YOUR CODE HERE!
     sat_cnt_cnt = engine.execute("select * from country_satellite where country_code='"+cntry+"'", con=engine)
-    data_cat = engine.execute("select * from satellite_category", con=engine)
-    
     country = engine.execute("select * from country ", con=engine)
+    data_cat = engine.execute("select * from satellite_category", con=engine)
+    sat_ids = engine.execute("select satellite_id from country_satellite order by 1", con=engine)
+    sat_names = engine.execute("select satellite_name from country_satellite order by 1", con=engine)
     #return render_template("index.html", listings=listings)
     # Return template and data
 
@@ -69,43 +77,196 @@ def satellite_country(cntry):
     
     for record in sat_cnt_cnt:
         coordinatesjson = {}
+        if (incrd >int(numSat)):
+            break
         try: 
             url = "https://api.n2yo.com/rest/v1/satellite/positions/"+str(record['satellite_id'])+"/41.702/-76.014/0/2/&apiKey=J3H9EJ-Z2GE6Y-BC2E6G-4LOF"
             response = requests.get(url).json()            
-            #print(response)
-            print(response['positions'][0]['satlatitude'])
-            print(response['positions'][0]['satlongitude'])
+            print(url)
+            print(response['positions'][1]['satlatitude'])
+            print(response['positions'][1]['satlongitude'])
             print(response['positions'])
             print(response['info']['satname'])
             print(response['info']['satid'])
             print(response['positions'][0]['azimuth'] )
             print(response['positions'][0]['elevation'] )
             print(response['positions'][0]['sataltitude']   )
+            print(numSat)
+            tt = time.strftime("%D %H:%M", time.localtime(int(response['positions'][0]['timestamp'])))
+            print(tt)
+            tt2 = time.strftime("%D %H:%M", time.localtime(int(response['positions'][1]['timestamp'])))
+            print(tt2)
+          #  print(datetime(int(response['positions'][0]['timestamp'])))
             #print(response['info'])
           #  coordinates.append(response['positions'][0]['satlatitude'])
           #  coordinates.append(response['positions'][0]['satlongitude'])
-            coordinatesjson['latitude'] = response['positions'][0]['satlatitude']            
-            coordinatesjson['longitude'] = response['positions'][0]['satlongitude']                      
-            #coordinatesjson['azimuth'] = response['positions'][0]['azimuth']            
-            #coordinatesjson['elevation'] = response['positions'][0]['elevation']            
-            #coordinatesjson['altitude'] = response['positions'][0]['sataltitude']            
-            #coordinatesjson['satname'] = response['info']['satname']            
-            #coordinatesjson['satid'] = response['info']['satid']  
+            coordinatesjson['latitude'] = response['positions'][1]['satlatitude']            
+            coordinatesjson['longitude'] = response['positions'][1]['satlongitude']                      
+            coordinatesjson['azimuth'] = response['positions'][1]['azimuth']            
+            coordinatesjson['elevation'] = response['positions'][1]['elevation']            
+            coordinatesjson['altitude'] = response['positions'][1]['sataltitude']            
+            coordinatesjson['satname'] = response['info']['satname']            
+            coordinatesjson['satid'] = response['info']['satid'] 
+            coordinatesjson['datetime'] = tt2  
             resdata.append(coordinatesjson)
             incrd = incrd+1
             incdata = incdata+1
-            if (incrd >10):
-                break
         except:
             pass
 
         responsedata['respdata'] = resdata
     
-    testValTestOnly = {'firstname': 'Harry', 'lastname': 'Potter'}
 
     # Build partial query URL
    
-    return render_template("index2.html", country=country, category=data_cat, sat_country=sat_cnt_cnt,resdata=responsedata,testVal = testValTestOnly)
+    return render_template("index.html", country=country, category=data_cat, sat_country=sat_cnt_cnt,responsedata=responsedata,
+     init_page="notinitpage" , sat_ids=sat_ids, sat_names=sat_names)
+
+# Route to render index.html template using data from Mongo
+@app.route("/getSatelliteById/<satid>/<numSat>")
+def satellite_byid(satid,numSat):
+
+    # Find one record of data from the mongo database
+    # @TODO: YOUR CODE HERE!
+    sat_cnt_cnt = engine.execute("select * from country_satellite where satellite_id='"+satid+"'", con=engine)
+    country = engine.execute("select * from country ", con=engine)
+    data_cat = engine.execute("select * from satellite_category", con=engine)
+    sat_ids = engine.execute("select satellite_id from country_satellite order by 1", con=engine)
+    sat_names = engine.execute("select satellite_name from country_satellite order by 1", con=engine)
+    #return render_template("index.html", listings=listings)
+    # Return template and data
+
+    incrd =0
+    coordinatesjson = {}
+    resdata = [{
+  
+    }
+    ]
+
+    responsedata = { 'respdata': resdata
+    }
+
+    incdata = 0
+    
+    for record in sat_cnt_cnt:
+        coordinatesjson = {}
+        if (incrd >int(numSat)):
+            break
+        try: 
+            url = "https://api.n2yo.com/rest/v1/satellite/positions/"+str(record['satellite_id'])+"/41.702/-76.014/0/2/&apiKey=J3H9EJ-Z2GE6Y-BC2E6G-4LOF"
+            response = requests.get(url).json()            
+            print(url)
+            print(response['positions'][1]['satlatitude'])
+            print(response['positions'][1]['satlongitude'])
+            print(response['positions'])
+            print(response['info']['satname'])
+            print(response['info']['satid'])
+            print(response['positions'][0]['azimuth'] )
+            print(response['positions'][0]['elevation'] )
+            print(response['positions'][0]['sataltitude']   )
+            print(numSat)
+            tt = time.strftime("%D %H:%M", time.localtime(int(response['positions'][0]['timestamp'])))
+            print(tt)
+            tt2 = time.strftime("%D %H:%M", time.localtime(int(response['positions'][1]['timestamp'])))
+            print(tt2)
+          #  print(datetime(int(response['positions'][0]['timestamp'])))
+            #print(response['info'])
+          #  coordinates.append(response['positions'][0]['satlatitude'])
+          #  coordinates.append(response['positions'][0]['satlongitude'])
+            coordinatesjson['latitude'] = response['positions'][1]['satlatitude']            
+            coordinatesjson['longitude'] = response['positions'][1]['satlongitude']                      
+            coordinatesjson['azimuth'] = response['positions'][1]['azimuth']            
+            coordinatesjson['elevation'] = response['positions'][1]['elevation']            
+            coordinatesjson['altitude'] = response['positions'][1]['sataltitude']            
+            coordinatesjson['satname'] = response['info']['satname']            
+            coordinatesjson['satid'] = response['info']['satid'] 
+            coordinatesjson['datetime'] = tt2  
+            resdata.append(coordinatesjson)
+            incrd = incrd+1
+            incdata = incdata+1
+        except:
+            pass
+
+        responsedata['respdata'] = resdata
+    
+
+    # Build partial query URL
+   
+    return render_template("index.html", country=country, category=data_cat, sat_country=sat_cnt_cnt,responsedata=responsedata,  
+    init_page="notinitpage" , sat_ids=sat_ids, sat_names=sat_names)
+
+# Route to render index.html template using data from Mongo
+@app.route("/getSatelliteByName/<satName>/<numSat>")
+def satellite_byname(satName,numSat):
+
+    # Find one record of data from the mongo database
+    # @TODO: YOUR CODE HERE!
+    sat_cnt_cnt = engine.execute("select * from country_satellite where satellite_name='"+satName+"'", con=engine)
+    country = engine.execute("select * from country ", con=engine)
+    data_cat = engine.execute("select * from satellite_category", con=engine)
+    sat_ids = engine.execute("select satellite_id from country_satellite order by 1", con=engine)
+    sat_names = engine.execute("select satellite_name from country_satellite order by 1", con=engine)
+    #return render_template("index.html", listings=listings)
+    # Return template and data
+
+    incrd =0
+    coordinatesjson = {}
+    resdata = [{
+  
+    }
+    ]
+
+    responsedata = { 'respdata': resdata
+    }
+
+    incdata = 0
+    
+    for record in sat_cnt_cnt:
+        coordinatesjson = {}
+        if (incrd >int(numSat)):
+            break
+        try: 
+            url = "https://api.n2yo.com/rest/v1/satellite/positions/"+str(record['satellite_id'])+"/41.702/-76.014/0/2/&apiKey=J3H9EJ-Z2GE6Y-BC2E6G-4LOF"
+            response = requests.get(url).json()            
+            print(url)
+            print(response['positions'][1]['satlatitude'])
+            print(response['positions'][1]['satlongitude'])
+            print(response['positions'])
+            print(response['info']['satname'])
+            print(response['info']['satid'])
+            print(response['positions'][0]['azimuth'] )
+            print(response['positions'][0]['elevation'] )
+            print(response['positions'][0]['sataltitude']   )
+            print(numSat)
+            tt = time.strftime("%D %H:%M", time.localtime(int(response['positions'][0]['timestamp'])))
+            print(tt)
+            tt2 = time.strftime("%D %H:%M", time.localtime(int(response['positions'][1]['timestamp'])))
+            print(tt2)
+          #  print(datetime(int(response['positions'][0]['timestamp'])))
+            #print(response['info'])
+          #  coordinates.append(response['positions'][0]['satlatitude'])
+          #  coordinates.append(response['positions'][0]['satlongitude'])
+            coordinatesjson['latitude'] = response['positions'][1]['satlatitude']            
+            coordinatesjson['longitude'] = response['positions'][1]['satlongitude']                      
+            coordinatesjson['azimuth'] = response['positions'][1]['azimuth']            
+            coordinatesjson['elevation'] = response['positions'][1]['elevation']            
+            coordinatesjson['altitude'] = response['positions'][1]['sataltitude']            
+            coordinatesjson['satname'] = response['info']['satname']            
+            coordinatesjson['satid'] = response['info']['satid'] 
+            coordinatesjson['datetime'] = tt2  
+            resdata.append(coordinatesjson)
+            incrd = incrd+1
+            incdata = incdata+1
+        except:
+            pass
+
+        responsedata['respdata'] = resdata
+    
+
+    # Build partial query URL
+   
+    return render_template("index.html", country=country, category=data_cat, sat_country=sat_cnt_cnt,responsedata=responsedata,
+      init_page="notinitpage", sat_ids=sat_ids, sat_names=sat_names)
 
 
 

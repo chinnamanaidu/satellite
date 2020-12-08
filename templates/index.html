@@ -8,7 +8,82 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <!--<link rel="stylesheet" href="style.css"> -->
-      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        <!--
+        <script
+          src="https://maps.googleapis.com/maps/api/js?key="+G_KEY+"&callback=initMap&libraries=&v=weekly"
+          defer
+        ></script>
+    -->
+        <script defer
+        src="https://maps.googleapis.com/maps/api/js?key="+G_KEY+"&libraries=drawing&callback=initMap">
+    </script>
+        <style type="text/css">
+          /* Always set the map height explicitly to define the size of the div
+           * element that contains the map. */
+          #map {
+            height: 100%;
+          }
+    
+          /* Optional: Makes the sample page fill the window. */
+          html,
+          body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+          }
+        </style>
+        <script>
+            //[-115.814, 32.7488333];
+          function initMap() {
+            const myLatLng = { lat: 32.7488333, lng: -115.814 };
+            const map = new google.maps.Map(document.getElementById("map"), {
+              zoom: 3,
+              center: myLatLng,
+            });
+            new google.maps.Marker({
+              position: myLatLng,
+              map,
+              title: "This is Marker to Initialize",
+            });
+    
+       
+        var init_page = '{{ init_page  }}';
+        if (init_page === 'notinitpage') {
+          var  responsedata = '{{ responsedata | tojson | safe }}';
+        var geocode = JSON.parse(responsedata);
+        var indata = {};
+    
+        for (var i=1; i<geocode['respdata'].length; i++) {
+            indata = {};
+            indata['lat'] = geocode['respdata'][i]['latitude'];
+            indata['lng'] = geocode['respdata'][i]['longitude'];
+            const infotext = "<h5> satName:"+geocode['respdata'][i]['satname']+"</h5>"+
+                        "<h5> satId:  "+geocode['respdata'][i]['satid']+"</h5>"+
+                        "<h5> latitude:  "+geocode['respdata'][i]['latitude']+"</h5>"+
+                        "<h5> longitude:  "+geocode['respdata'][i]['longitude']+"</h5>"+
+                        "<h5> altitude:  "+geocode['respdata'][i]['altitude']+"</h5>"+
+                        "<h5> elevation: "+geocode['respdata'][i]['elevation']+"</h5>"+
+                        "<h5> azimuth:  "+geocode['respdata'][i]['azimuth']+"</h5>"+
+                        "<h5> datetime:  "+geocode['respdata'][i]['datetime']+"</h5>";
+        const marker = new google.maps.Marker({
+          position: indata,
+          map,
+          title: geocode['respdata'][i]['satname']
+        });
+        const infowindow = new google.maps.InfoWindow({
+              content: infotext
+            });
+        marker.addListener("click", () => {
+              infowindow.open(map, marker);
+            });
+        }
+      }
+          
+          }
+        
+        </script>
+
       </head>
   <body>
 
@@ -68,20 +143,80 @@
      </div>
    </nav>  
       <!-- First of two columns -->
- 
-        <h5>Select the country:</h5>
-        <select id="selDatasetCnt" onchange="location = '/getSatellite/'+this.options[this.selectedIndex].value;">
+ <table>
+   <tr>
+     <td>
+      Select the country: (Number of satellites from drop down) 
+     </td>
+     <td>
+      Satellite Ids  
+    </td>
+    <td>
+      Satellite Names
+    </td>
+   </tr>
+   <tr>
+     <td>
+      <select id="selDatasetCnt" onchange="location = '/getSatellite/'+this.options[this.selectedIndex].value+'/10';">
+        {% for cnt in country %}
+        <option value={{ cnt.country_code  }}>{{ cnt.country  }}</option>
+        {% endfor %}
+    </select>
+    <select id="numSatellite" >
+      <option value=25>10</option>
+      <option value=25>25</option>
+      <option value=25>100</option>
+      <option value=25>200</option>                
+  </select>
+     </td>
+     <td>
+      <select id="selDatasetids" onchange="location = '/getSatelliteById/'+this.options[this.selectedIndex].value+'/10';">
+        {% for sat_id in sat_ids %}
+        <option value={{ sat_id.satellite_id  }}>{{ sat_id.satellite_id }}</option>
+        {% endfor %}
+    </select>
+    </td>
+    <td>
+      <select id="selDatasetnames" onchange="location = '/getSatelliteByName/'+this.options[this.selectedIndex].text+'/10';">
+        {% for satellite_name in sat_names %}
+        <option value={{ satellite_name.satellite_name  }}>{{ satellite_name.satellite_name }}</option>
+        {% endfor %}
+    </select>
+    </td>
+   </tr>
+ </table>
+ <!--
+        <h5>Select the country: (Number of satellites from drop down)         Satellite ID       Satellite Name</h5>
+        <select id="selDatasetCnt" onchange="location = '/getSatellite/'+this.options[this.selectedIndex].value+'/10';">
           {% for cnt in country %}
           <option value={{ cnt.country_code  }}>{{ cnt.country  }}</option>
           {% endfor %}
-      </select><br>
-      <h5>Select the category:</h5>
+      </select>
+      <select id="numSatellite" >
+        <option value=25>10</option>
+        <option value=25>25</option>
+        <option value=25>100</option>
+        <option value=25>200</option>                
+    </select>
+    <select id="selDatasetids" onchange="location = '/getSatellite/'+this.options[this.selectedIndex].value+'/10';">
+      {% for sat_id in sat_ids %}
+      <option value={{ sat_id.satellite_id  }}>{{ sat_id.satellite_id }}</option>
+      {% endfor %}
+  </select>
+  <select id="selDatasetnames" onchange="location = '/getSatellite/'+this.options[this.selectedIndex].value+'/10';">
+    {% for satellite_name in satellite_names %}
+    <option value={{ satellite_name.satellite_name  }}>{{ satellite_name.satellite_name }}</option>
+    {% endfor %}
+</select>
+-->
+
+             <!--
+               <h5>Select the category:</h5>
         <select id="selDatasetCat" onchange="optionCatChanged(this.value)">
           {% for cate in category %}
           <option value={{ cate.category  }}>{{ cate.category  }}</option>
           {% endfor %}
-      </select><br>
-             <!--
+      </select>
                <div class="col-md-12">
           <select id="selDataset" onchange="optionChanged(this.value)"></select>
 
@@ -102,28 +237,29 @@
         </ul>
         </div>
         -->    
-  <br><br><br><br>
+  <br><br>
+  
   
   <div id="map"></div>
+
+  <!-- D3 JavaScript
+    <div id="map"></div>
   
-  <script>
-    var testVal = '';
-    testVal = '{{ testVal | tojson | safe}}';
-    var resdata = '';
-    resdata ='{{ resdata | tojson }}';
-  </script>
-  <!-- D3 JavaScript -->
+  </script> -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.3/d3.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.min.js"></script>
 
+ <!-- Leaflet JavaScript -->
+ <script src="https://unpkg.com/leaflet@1.3.3/dist/leaflet.js"
+ integrity="sha512-tAGcCfR4Sc5ZP5ZoVz0quoZDYX5aCtEm/eu1KhSLj2c9eFrylXZknQYmxUssFaVJKvvc0dJQixhGjG2yXWiV9Q=="
+ crossorigin=""></script>  
+ <script type="text/javascript" src="https://unpkg.com/leaflet.markercluster@1.0.3/dist/leaflet.markercluster.js"></script>
 
-
-  <script type="text/javascript" src="{{url_for('static', filename='/config.js') }}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='config.js') }}"></script>
  
-  <!-- Leaflet JavaScript 
+<!--
      <script type="text/javascript" src="{{url_for('static', filename='/plot.js') }}"></script>
-  -->
-
+-->
 </body>
 
 </html>
