@@ -6,5 +6,26 @@ body {
 #map,
 body,
 html {
-  height: 100%;
+  height: 3000px;
+}
+
+
+.h6 {
+  font-size: 14px;
+  font-weight: normal;
+  font-style: Arial;  
+  color: black;
+}
+
+.greenblue {
+  background: darkcyan;  
+
+ 
+}
+.purple {
+  background: rebeccapurple;
+}
+
+.red {
+  background: indianred;
 }
