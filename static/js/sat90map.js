@@ -4,8 +4,7 @@ var lightmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
     tileSize: 512,
     maxZoom: 18,
     zoomOffset: -1,
-    id: "dark-v10",
-    // id: "mapbox/streets-v11",
+    id: "mapbox/streets-v11",
     accessToken: API_KEY
 })
 
@@ -20,7 +19,6 @@ var layers = {
 var myMap = L.map("map", {
     center: [40.54055668158878, -104.35709913347607],
     zoom: 2,
-    // minZoom:2,
     layers: [
         layers.Under_10K,
         layers.From_10Kto50K,
@@ -91,9 +89,7 @@ d3.json("/static/data/satlaunch90.json", function(data){
   
     
     var newMarker= L.circle(earth_coor, {radius: (sat_alt)});
-    // newMarker.addTo(layers[updates])
-    newMarker.bindPopup("Satellite Name:" + data[0].above[i].satname + "<br>Altitude:</br>" + data[0].above[i].satalt)
     newMarker.addTo(layers[updates])
-    
+    newMarker.bindPopup("Satellite Name:" + data[0].above[i].satname + "<br>Altitude:</br>" + data[0].above[i].satalt)    
     }
-})
+});

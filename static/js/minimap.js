@@ -19,7 +19,7 @@ var basemap = base;
 
 // Create map & boundaries
 var myMap = L.map("map", {
-  // center: [20, 0],
+  center: [20, 0],
   zoom: 2
   // minZoom: 2
 })
@@ -32,7 +32,7 @@ var myIcon = L.icon({
   iconUrl: '/static/rocket.png',
   iconSize: [9.5,23.75],
   iconAnchor: [5.59,22.75],
-  popupAnchor: [-3, -76]});
+  popupAnchor: [-100, -10]});
   
 
 
