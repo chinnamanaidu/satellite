@@ -68,4 +68,3 @@ var geosat = d3.json(earth_sat, function(data) {
         var newmap = minimap
 
         var preview = new L.Control.MiniMap(newmap).addTo(myMap);
-
