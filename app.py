@@ -14,7 +14,7 @@ from scipy import stats
 app = Flask(__name__)
 
 # Use PyMongo to establish Mongo connection
-mongo = PyMongo(app, uri="mongodb://localhost:27017/web_scrapping_challenge_db")
+#mongo = PyMongo(app, uri="mongodb://localhost:27017/web_scrapping_challenge_db")
 
 rds_connection_string = "postgres:admin@localhost:5432/satellite"
 #<insert password>@localhost:5432/customer_db"
@@ -120,7 +120,7 @@ def satellite_country(cntry,numSat):
     # Build partial query URL
    
     return render_template("index.html", country=country, category=data_cat, sat_country=sat_cnt_cnt,responsedata=responsedata,
-     init_page="notinitpage" , sat_ids=sat_ids, sat_names=sat_names)
+     init_page="notinitpage" , sat_ids=sat_ids, sat_names=sat_names, sel_cnt=cntry)
 
 # Route to render index.html template using data from Mongo
 @app.route("/getSatelliteById/<satid>/<numSat>")
@@ -193,7 +193,7 @@ def satellite_byid(satid,numSat):
     # Build partial query URL
    
     return render_template("index.html", country=country, category=data_cat, sat_country=sat_cnt_cnt,responsedata=responsedata,  
-    init_page="notinitpage" , sat_ids=sat_ids, sat_names=sat_names)
+    init_page="notinitpage" , sat_ids=sat_ids, sat_names=sat_names, sat_sel_id=satid)
 
 # Route to render index.html template using data from Mongo
 @app.route("/getSatelliteByName/<satName>/<numSat>")
@@ -266,7 +266,7 @@ def satellite_byname(satName,numSat):
     # Build partial query URL
    
     return render_template("index.html", country=country, category=data_cat, sat_country=sat_cnt_cnt,responsedata=responsedata,
-      init_page="notinitpage", sat_ids=sat_ids, sat_names=sat_names)
+      init_page="notinitpage", sat_ids=sat_ids, sat_names=sat_names,sel_name=satName)
 
 
 # Route to render index.html template using data from Mongo
