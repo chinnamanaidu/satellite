@@ -269,6 +269,124 @@ def satellite_byname(satName,numSat):
       init_page="notinitpage", sat_ids=sat_ids, sat_names=sat_names)
 
 
+# Route to render index.html template using data from Mongo
+@app.route("/indexplots")
+def indexplots():
+
+    # Find one record of data from the mongo database
+    # @TODO: YOUR CODE HERE!
+    #sat_cnt_cnt = engine.execute("select * from country_satellite where satellite_name='"+satName+"'", con=engine)
+    country = engine.execute("select * from country ", con=engine)
+    data_cat = engine.execute("select * from satellite_category", con=engine)
+    sat_ids = engine.execute("select satellite_id from country_satellite order by 1", con=engine)
+    sat_names = engine.execute("select satellite_name from country_satellite order by 1", con=engine)
+    #return render_template("index.html", listings=listings)
+    # Return template and data
+
+    resdata = [{
+  
+    }
+    ]
+
+    responsedata = { 'respdata': resdata
+    }
+
+ 
+
+    # Build partial query URL
+   
+    return render_template("index_plots.html", country=country, category=data_cat, responsedata=responsedata,
+      init_page="notinitpage", sat_ids=sat_ids, sat_names=sat_names)
+
+
+# Route to render index.html template using data from Mongo
+@app.route("/minimapindex")
+def minimapindex():
+
+    # Find one record of data from the mongo database
+    # @TODO: YOUR CODE HERE!
+    #sat_cnt_cnt = engine.execute("select * from country_satellite where satellite_name='"+satName+"'", con=engine)
+    country = engine.execute("select * from country ", con=engine)
+    data_cat = engine.execute("select * from satellite_category", con=engine)
+    sat_ids = engine.execute("select satellite_id from country_satellite order by 1", con=engine)
+    sat_names = engine.execute("select satellite_name from country_satellite order by 1", con=engine)
+    #return render_template("index.html", listings=listings)
+    # Return template and data
+
+    resdata = [{
+  
+    }
+    ]
+
+    responsedata = { 'respdata': resdata
+    }
+
+ 
+
+    # Build partial query URL
+   
+    return render_template("minimap_index.html", country=country, category=data_cat, responsedata=responsedata,
+      init_page="notinitpage", sat_ids=sat_ids, sat_names=sat_names)
+
+
+# Route to render index.html template using data from Mongo
+@app.route("/satglobe")
+def satglobe():
+
+    # Find one record of data from the mongo database
+    # @TODO: YOUR CODE HERE!
+    #sat_cnt_cnt = engine.execute("select * from country_satellite where satellite_name='"+satName+"'", con=engine)
+    country = engine.execute("select * from country ", con=engine)
+    data_cat = engine.execute("select * from satellite_category", con=engine)
+    sat_ids = engine.execute("select satellite_id from country_satellite order by 1", con=engine)
+    sat_names = engine.execute("select satellite_name from country_satellite order by 1", con=engine)
+    #return render_template("index.html", listings=listings)
+    # Return template and data
+
+    resdata = [{
+  
+    }
+    ]
+
+    responsedata = { 'respdata': resdata
+    }
+
+ 
+
+    # Build partial query URL
+   
+    return render_template("satGlobe.html", country=country, category=data_cat, responsedata=responsedata,
+      init_page="notinitpage", sat_ids=sat_ids, sat_names=sat_names)
+
+
+# Route to render index.html template using data from Mongo
+@app.route("/cluster")
+def cluster():
+
+    # Find one record of data from the mongo database
+    # @TODO: YOUR CODE HERE!
+    #sat_cnt_cnt = engine.execute("select * from country_satellite where satellite_name='"+satName+"'", con=engine)
+    country = engine.execute("select * from country ", con=engine)
+    data_cat = engine.execute("select * from satellite_category", con=engine)
+    sat_ids = engine.execute("select satellite_id from country_satellite order by 1", con=engine)
+    sat_names = engine.execute("select satellite_name from country_satellite order by 1", con=engine)
+    #return render_template("index.html", listings=listings)
+    # Return template and data
+
+    resdata = [{
+  
+    }
+    ]
+
+    responsedata = { 'respdata': resdata
+    }
+
+ 
+
+    # Build partial query URL
+   
+    return render_template("cluster.html", country=country, category=data_cat, responsedata=responsedata,
+      init_page="notinitpage", sat_ids=sat_ids, sat_names=sat_names)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -84,12 +84,12 @@ function init() {
     var manager = createLoader(renderer.domElement, animate);
 
     var texLoader = new THREE.TextureLoader(manager).setCrossOrigin(true);
-    var texture = texLoader.load('/globe.jpg');
+    var texture = texLoader.load('/static/js/globe.jpg');
     texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
     var earth = new Earth(1.0, texture);
 
-    var earth_sat =  "/earthlaunch.geojson"
+    var earth_sat =  "/static/data/earthlaunch.geojson"
     var satellites = []
     
     var geosat = d3.json(earth_sat, function(data) {
