@@ -4,4 +4,6 @@ flask_pymongo
 sqlalchemy
 splinter
 bs4
+BeautifulSoap
 scipy
+stats

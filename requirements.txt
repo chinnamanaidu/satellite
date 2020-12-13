@@ -7,3 +7,7 @@ bs4
 BeautifulSoap
 scipy
 stats
+django
+gunicorn
+django-heroku
+requests
