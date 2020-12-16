@@ -1,9 +1,4 @@
-from flask import Flask, render_template, redirect
-<<<<<<< HEAD
 from flask_pymongo import PyMongo
-from sql_keys import username, password
-=======
->>>>>>> e965fcbe2372a961a5fd196577bd424416013af3
 from sqlalchemy import create_engine
 from splinter import Browser
 from bs4 import BeautifulSoup as bs
@@ -12,21 +7,17 @@ import csv
 import datetime, time
 import requests
 from scipy import stats
-from sql_keys import username, password 
 
 # Create an instance of Flask
 app = Flask(__name__)
 
 
-<<<<<<< HEAD
 #rds_connection_string = "postgres:bootcamp@localhost:5432/satellite"
 #<insert password>@localhost:5432/customer_db"
-=======
 
-# rds_connection_string = "postgres:@localhost:5432/satellite"
-# engine = create_engine(f'postgresql://{rds_connection_string}')
->>>>>>> e965fcbe2372a961a5fd196577bd424416013af3
-engine = create_engine(f'postgresql://{username}:{password}@localhost:5432/satellite')
+rds_connection_string = "postgres:@localhost:5432/satellite"
+engine = create_engine(f'postgresql://{rds_connection_string}')
+#engine = create_engine(f'postgresql://{username}:{password}@localhost:5432/satellite')
 
 @app.route("/")
 def home():
