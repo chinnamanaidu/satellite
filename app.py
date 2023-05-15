@@ -7,6 +7,9 @@ import csv
 import datetime, time
 import requests
 from scipy import stats
+import datetime, time
+import requests
+from scipy import stats
 
 # Create an instance of Flask
 #app = Flask(__name__)
